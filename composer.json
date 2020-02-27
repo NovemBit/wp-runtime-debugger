@@ -1,0 +1,28 @@
+{
+  "name": "novembit/wp-runtime-debugger",
+  "description": "WordPress Runtime Debugger.",
+  "keywords": [
+  ],
+  "license": [
+    "GPL-3.0-or-later"
+  ],
+  "type": "project",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "php": ">=7.1"
+  },
+  "require-dev": {
+  },
+  "autoload": {
+    "psr-4": {
+      "NovemBit\\wp\\plugins\\RuntimeDebugger\\": "src/"
+    }
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    }
+  ]
+}
