@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       WP Runtime Profiller
+ * Plugin Name:       WP Runtime Profiler
  * Version:           1.0.1
  * Author:            Novembit
  * Text Domain:       novembit
@@ -9,7 +9,7 @@
 register_activation_hook( __FILE__, function () {
 
 	$source = __DIR__ . '/mu-plugin/mu.php';
-	$target = WPMU_PLUGIN_DIR . '/wp-runtime-profiller.php';
+	$target = WPMU_PLUGIN_DIR . '/wp-runtime-profiler.php';
 
 	if ( ! file_exists( WPMU_PLUGIN_DIR ) || ! is_dir( WPMU_PLUGIN_DIR ) ) {
 		mkdir( WPMU_PLUGIN_DIR );
@@ -30,7 +30,7 @@ register_activation_hook( __FILE__, function () {
 } );
 
 register_deactivation_hook( __FILE__, function () {
-	$target = WPMU_PLUGIN_DIR . '/wp-runtime-profiller.php';
+	$target = WPMU_PLUGIN_DIR . '/wp-runtime-profiler.php';
 
 	if ( unlink( $target ) ) {
 		return true;
