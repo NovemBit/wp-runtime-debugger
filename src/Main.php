@@ -19,20 +19,20 @@ class Main
 
     private function __construct()
     {
-        if ( isset( $_REQUEST['wrp-profile'] ) ) {
+        if (isset($_REQUEST['wrp-profile'])) {
 
             $this->redefineCoreFunction();
 
-            $file_path = WP_CONTENT_DIR.'/wp-runtime-debugger/';
+            $file_path = WP_CONTENT_DIR . '/wp-runtime-debugger/';
 
-            if(!file_exists($file_path)){
+            if (!file_exists($file_path)) {
                 mkdir($file_path);
             }
 
-            $file_name = str_replace( '?', '__', $_SERVER['REQUEST_URI'] );
-            $file_name = preg_replace( '/(?:\W)+/', '-', $file_name );
+            $file_name = str_replace('?', '__', $_SERVER['REQUEST_URI']);
+            $file_name = preg_replace('/(?:\W)+/', '-', $file_name);
 
-            if ( ! $file_name ) {
+            if (!$file_name) {
                 $file_name = 'wrp-data';
             }
 
@@ -40,14 +40,14 @@ class Main
             $offset = 0;
 
             do {
-                ++ $offset;
+                ++$offset;
                 $file_full_path = $file_path . $file_name . '-' . $offset . '.csv';
-            } while ( file_exists( $file_full_path ) );
+            } while (file_exists($file_full_path));
 
-            $handle = fopen( $file_full_path, 'w' ) or die( 'Cannot open file:  ' . $file_full_path );
+            $handle = fopen($file_full_path, 'w') or die('Cannot open file:  ' . $file_full_path);
 
-            if ( ! defined( 'WRP_FILE_RESOURCE' ) ) {
-                define( 'WRP_FILE_RESOURCE', $handle );
+            if (!defined('WRP_FILE_RESOURCE')) {
+                define('WRP_FILE_RESOURCE', $handle);
             }
         }
     }
@@ -56,13 +56,13 @@ class Main
     {
 
         if (!function_exists('runkit_function_redefine')) {
-            echo "Please install runkit extension";
+            echo "Please install <b>php-runkit</b> extension to continue.";
             wp_die();
         }
 
-        runkit_method_redefine(Wp_Hook::class, 'apply_filters', ' $value, $args', file_get_contents(__DIR__.'/core/WP_Hook_apply_filters'));
+        runkit_method_redefine(Wp_Hook::class, 'apply_filters', ' $value, $args', file_get_contents(__DIR__ . '/core/WP_Hook_apply_filters'));
 
-        runkit_method_redefine(Wp_Hook::class, 'do_all_hook', '&$args',file_get_contents(__DIR__.'/core/WP_Hook_do_all_hook'));
+        runkit_method_redefine(Wp_Hook::class, 'do_all_hook', '&$args', file_get_contents(__DIR__ . '/core/WP_Hook_do_all_hook'));
 
     }
 
