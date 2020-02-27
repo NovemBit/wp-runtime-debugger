@@ -1,0 +1,20 @@
+$nesting_level = $this->nesting_level++;
+$this->iterations[$nesting_level] = array_keys($this->callbacks);
+$hook_tracker = FilterExecTracker::get_instance();
+$type = $this->doing_action ? 'a' : 'f';
+$hook_tracker->track_callback_start($type, 'all', '');
+$hook_id = $hook_tracker->request_id;
+do {
+    $priority = current($this->iterations[$nesting_level]);
+    foreach ($this->callbacks[$priority] as $the_) {
+        $tracker = FilterExecTracker::get_instance();
+        $tracker->track_callback_start('c', 'all', $the_['function']);
+        $current_id = $tracker->request_id;
+        $callback_name = $the_['function'];
+        call_user_func_array($the_['function'], $args);
+        $tracker->track_callback_end($current_id, 'c', 'all', $callback_name);
+    }
+} while (false !== next($this->iterations[$nesting_level]));
+$hook_tracker->track_callback_end($hook_id, $type, 'all', '');
+unset($this->iterations[$nesting_level]);
+$this->nesting_level--;

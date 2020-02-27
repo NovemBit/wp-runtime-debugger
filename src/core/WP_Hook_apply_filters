@@ -1,0 +1,49 @@
+if (! $this->callbacks ) {
+    return $value;
+}
+
+$nesting_level = $this->nesting_level++;
+
+$this->iterations[ $nesting_level ] = array_keys( $this->callbacks );
+$num_args                           = count( $args );
+
+$type              = $this->doing_action ? 'a' : 'f';
+$hook_tracker  = \NovemBit\wp\plugins\RuntimeDebugger\FilterExecTracker::get_instance();
+$hook_name = current_filter();
+$hook_tracker->track_callback_start($type, $hook_name, '');
+$hook_id = $hook_tracker->request_id;
+
+do {
+    $this->current_priority[ $nesting_level ] = current( $this->iterations[ $nesting_level ] );
+    $priority                                 = $this->current_priority[ $nesting_level ];
+
+    foreach ( $this->callbacks[ $priority ] as $the_ ) {
+        if (! $this->doing_action ) {
+            $args[0] = $value;
+        }
+
+        // Avoid the array_slice if possible.
+        if ( $the_['accepted_args'] == 0 ) {
+            $value = call_user_func( $the_['function'] );
+        } elseif ( $the_['accepted_args'] >= $num_args ) {
+            $value = call_user_func_array( $the_['function'], $args );
+        } else {
+            $value = call_user_func_array( $the_['function'], array_slice( $args, 0, (int) $the_['accepted_args'] ) );
+        }
+
+        $tracker = \NovemBit\wp\plugins\RuntimeDebugger\FilterExecTracker::get_instance();
+        $tracker->track_callback_start('c', $hook_name, $the_['function']);
+        $current_id    = $tracker->request_id;
+        $callback_name = $the_['function'];
+        $tracker->track_callback_end($current_id, 'c', $hook_name, $callback_name);
+    }
+} while ( false !== next($this->iterations[ $nesting_level ]) );
+
+$hook_tracker->track_callback_end($hook_id, $type, $hook_name, '');
+
+unset( $this->iterations[ $nesting_level ] );
+unset( $this->current_priority[ $nesting_level ] );
+
+$this->nesting_level--;
+
+return $value;
