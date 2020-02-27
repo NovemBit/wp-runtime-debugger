@@ -30,16 +30,14 @@ class FilterExecTracker
      */
     protected function __construct()
     {
-        if (! isset($_REQUEST['track_hooks']) ) {
-            return;
-        }
-        if (! defined('FILE_TO_LOG') ) {
+        if (! defined('WRP_FILE_RESOURCE') ) {
             die;
         }
-        $this->file = FILE_TO_LOG;
+        $this->file = WRP_FILE_RESOURCE;
         $this->write_columns_row();
 
     }
+
     protected function __clone()
     {
     }
@@ -73,7 +71,7 @@ class FilterExecTracker
 
     public function track_callback_start( $type, $filter_name, $callback )
     {
-        if (true === $this->disabled || ! isset($_REQUEST['track_hooks']) ) {
+        if (true === $this->disabled ) {
             return;
         }
         $this->request_id += 1;
@@ -100,7 +98,7 @@ class FilterExecTracker
 
     public function track_callback_end( $id, $type, $filter_name, $callback )
     {
-        if (true === $this->disabled || ! isset($_REQUEST['track_hooks']) ) {
+        if (true === $this->disabled  ) {
             return;
         }
         $this->disabled = true;

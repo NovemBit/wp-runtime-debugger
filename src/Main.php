@@ -19,9 +19,9 @@ class Main
 
     private function __construct()
     {
-        $this->redefineCoreFunction();
+        if ( isset( $_REQUEST['wrp-profile'] ) ) {
 
-        if ( isset( $_REQUEST['track_hooks'] ) ) {
+            $this->redefineCoreFunction();
 
             $file_path = WP_CONTENT_DIR.'/wp-runtime-debugger/';
 
@@ -33,18 +33,21 @@ class Main
             $file_name = preg_replace( '/(?:\W)+/', '-', $file_name );
 
             if ( ! $file_name ) {
-                $file_name = 'hook_tracker';
+                $file_name = 'wrp-data';
             }
 
             $file_name = time() . $file_name;
             $offset = 0;
+
             do {
                 ++ $offset;
                 $file_full_path = $file_path . $file_name . '-' . $offset . '.csv';
             } while ( file_exists( $file_full_path ) );
+
             $handle = fopen( $file_full_path, 'w' ) or die( 'Cannot open file:  ' . $file_full_path );
-            if ( ! defined( 'FILE_TO_LOG' ) ) {
-                define( 'FILE_TO_LOG', $handle );
+
+            if ( ! defined( 'WRP_FILE_RESOURCE' ) ) {
+                define( 'WRP_FILE_RESOURCE', $handle );
             }
         }
     }
